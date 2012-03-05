@@ -2,8 +2,7 @@ var express = require('express'),
     config = require('./config.js'),
     request = require('request'),
     path = require('path'),
-    fs = require('fs'),
-    url = require('url');
+    fs = require('fs');
 
 var app = config.https ? express.createServer(config.https) :
                          express.createServer();
@@ -42,6 +41,6 @@ app.get('/:protocol/:domain.ico', function(req, res, next) {
 module.exports = app;
 
 if (!module.parent) {
-  console.log("listening on", config.hostname + ":" + config.port);
+  console.log("listening on port", config.port);
   app.listen(config.port);
 }
