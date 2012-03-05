@@ -30,12 +30,23 @@ app.get('/:protocol/:domain.ico', function(req, res, next) {
   var filename = path.join(app.cacheDir, protocol, domain + '.ico');
   var r = request.get(uri);
   r.pipe(fs.createWriteStream(filename));
+  
+  function writeBlank() {
+    fs.unlinkSync(filename);
+    fs.symlinkSync("../blank.ico", filename);
+  }
+
+  r.on("response", function(response) {
+    if (response.statusCode != 200) {
+      r.abort();
+      writeBlank();
+    }
+  });
   r.on("end", function() {
     return app.cache(req, res, next);
   });
   r.on("error", function() {
-    fs.unlinkSync(filename);
-    fs.symlinkSync("../blank.ico", filename);
+    writeBlank();
     return app.cache(req, res, next);
   });
 });
