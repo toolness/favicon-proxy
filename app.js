@@ -34,7 +34,9 @@ app.get('/:protocol/:domain.ico', function(req, res, next) {
     return app.cache(req, res, next);
   });
   r.on("error", function() {
-    return res.send(404);
+    fs.unlinkSync(filename);
+    fs.symlinkSync("../blank.ico", filename);
+    return app.cache(req, res, next);
   });
 });
 
